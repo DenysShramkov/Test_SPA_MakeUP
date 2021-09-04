@@ -12,13 +12,38 @@ window.addEventListener('DOMContentLoaded', () => {
 	};
 
 	getData('http://makeup-api.herokuapp.com/api/v1/products.json?product_category=liquid&product_type=eyeliner')
-	.then(data => { console.log(data);
-		/* data.forEach(({img, altimg, title, descr, price}) => { //деструктуризация объекта
-			//наша функция render() создана выше
-			//new Menu(obj.img, obj.altimg, obj.title, obj.descr, obj.price).render();
-			new Menu(img, altimg, title, descr, price, 28, menuField).render(); //вызываем метод класса подставляя значения
-		}); */
+	.then(data => {
+		console.log(data);
+		renderProductItem(data, '.product__container');
 	});
+
+	function renderProductItem (data, parentContainer) {
+		const parent = document.querySelector(parentContainer);
+
+		data.forEach(item => {
+			const productItem = document.createElement('div');
+			productItem.classList.add('product__item');
+			productItem.innerHTML = `
+			<div class="product__body">
+				<div class="product__image">
+					<img class="" src=${item.api_featured_image}>
+				</div>
+				<div class="">
+					<h3>${item.brand}</h3>
+					<h4>${item.name}</h4>
+					<p><span class="bold">Category: </span>${item.category}</p>
+					<p>${item.price_sign}${item.price}</p>
+					<p></p>
+				</div>
+				<div class="product__color_section">
+					<div class="product__color" style="background-color: #000000; height: 20px; margin: 0 3px 3px 3px">
+					</div>
+				</div>
+			</div>
+			`;
+			parent.append(productItem);
+		});
+	}
 
 	/* getData('https://portfolio-food-denis-default-rtdb.europe-west1.firebasedatabase.app/slider.json')
 	.then(data => {
