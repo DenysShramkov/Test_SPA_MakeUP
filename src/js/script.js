@@ -69,8 +69,27 @@ window.addEventListener('DOMContentLoaded', () => {
 		return colorsItems;
 	}
 
+	function renderBrendList(data, id) {
+		const ul = document.querySelector(id);
+		function brands(arr) {
+			return arr.sort().filter(function(item, pos, ary) {
+				return !pos || item != ary[pos - 1];
+			});
+		}
+		brands(data).forEach(item => {
+			if (item !== '' && item !== null) {
+				const brendLi = document.createElement('li');
+				brendLi.classList.add('filter__li_item');
+				brendLi.textContent = item;
+				brendLi.dataset.brand = item;
+				ul.append(brendLi);
+			}
+		});
+	}
+
 	function renderProductItem(data, parentContainer) {
 		const parent = document.querySelector(parentContainer);
+		let brandsArr = [];
 		parent.innerHTML = '';
 		for (const item of data) {
 			const productItem = document.createElement('div');
@@ -92,6 +111,8 @@ window.addEventListener('DOMContentLoaded', () => {
 			</div>
 			`;
 			parent.append(productItem);
-		};
+			brandsArr.push(item.brand);
+		}
+		renderBrendList(brandsArr, '#brand');
 	}
 });
