@@ -10,16 +10,24 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 		return await res.json();
 	};
+	let filterBrands; 
+	let brandsLength;
 
 	getData('http://makeup-api.herokuapp.com/api/v1/products.json?product_category=liquid&product_type=eyeliner')
+	.then(data => {
+		getListOfBrands(data, '#brand');
+		return data;
+	})
 	.then(data => {
 		SortData(data);
 	});
 
+	let dataSort;
+
 	function SortData(data) {
 		const buttons = document.querySelector('.product__sort');
 
-		let dataSort = data;
+		dataSort = data;
 		renderProductItem(dataSort, '.product__container');
 
 		buttons.addEventListener('click', (e) => {
@@ -34,7 +42,7 @@ window.addEventListener('DOMContentLoaded', () => {
 						return 1;
 					}
 				});
-			} else if (e.target.dataset.sort == 'Z-A') {
+			} else if (e.target.dataset.sort ==='Z-A') {
 				dataSort = data.sort(function(a, b) {
 					let nameA = a.name.toUpperCase();
 					let nameB = b.name.toUpperCase();
@@ -45,19 +53,19 @@ window.addEventListener('DOMContentLoaded', () => {
 						return 1;
 					}
 				});
-			} else if (e.target.dataset.sort == 'pricedown') {
+			} else if (e.target.dataset.sort === 'pricedown') {
 				dataSort = data.sort(function(a, b) {
 					return a.price - b.price;
 				});
-			} else if (e.target.dataset.sort == 'priceup') {
+			} else if (e.target.dataset.sort === 'priceup') {
 				dataSort = data.sort(function(a, b) {
 					return b.price - a.price;
 				});
 			} 
 
 			renderProductItem(dataSort, '.product__container');
-
 		});
+		listForFilter('brand', dataSort);
 	}
 
 	function colorsArray(array) {
@@ -71,12 +79,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	function renderBrendList(data, id) {
 		const ul = document.querySelector(id);
+		ul.innerHTML = '';
 		function brands(arr) {
 			return arr.sort().filter(function(item, pos, ary) {
 				return !pos || item != ary[pos - 1];
 			});
 		}
-		brands(data).forEach(item => {
+		const sorted = brands(data);
+		brandsLength = sorted.length;
+		sorted.forEach(item => {
 			if (item !== '' && item !== null) {
 				const brendLi = document.createElement('li');
 				brendLi.classList.add('filter__li_item');
@@ -87,9 +98,30 @@ window.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
+	function listForFilter(id, data) {
+		const element = document.querySelector(`#${id}`);
+		element.addEventListener('click', (e) => {
+			if (e.target.classList.contains('filter__li_item')) {
+				if (filterBrands.length > brandsLength - 5) {
+					filterBrands = [];
+				}
+				filterBrands.push(e.target.getAttribute(`data-${id}`));
+				renderProductItem(data, '.product__container');
+			}
+		});
+	}
+
+	function getListOfBrands(data, id) {
+		let brandsArr = [];
+		data.forEach(item => {
+			brandsArr.push(item.brand);
+		});
+		filterBrands = brandsArr;
+		renderBrendList(brandsArr, id);
+	}
+
 	function renderProductItem(data, parentContainer) {
 		const parent = document.querySelector(parentContainer);
-		let brandsArr = [];
 		parent.innerHTML = '';
 		for (const item of data) {
 			const productItem = document.createElement('div');
@@ -110,9 +142,10 @@ window.addEventListener('DOMContentLoaded', () => {
 				<div class="product__color_section">${colorsHTML}</div>
 			</div>
 			`;
-			parent.append(productItem);
-			brandsArr.push(item.brand);
+
+			if (filterBrands.includes(item.brand)) {
+				parent.append(productItem);
+			}
 		}
-		renderBrendList(brandsArr, '#brand');
 	}
 });
