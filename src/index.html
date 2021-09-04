@@ -41,27 +41,50 @@
     <meta name="msapplication-TileImage" content="icons/favicon//ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="css/style.min.css">
-</head>
+    <link rel="stylesheet" href="css/style.min.css"> 
+
 <body>
-	<div class="product">
-		<div class="product__sort">
-			<button data-sort='A-Z'>
-				Sort A to Z
-			</button>
-			<button data-sort='Z-A'>
-				Sort Z to A
-			</button>
-			<button data-sort='pricedown'>
-				Sort price &#8593;
-			</button>
-			<button data-sort='priceup'> 
-				Sort price &#8595;
-			</button>
+	<div class="container">
+		<div class="header__photo_wrapper">
+			<div class="header__photo"><img src="img/brushes.png" alt="Brushes"></div>
+	
+			<div class="header__photo header__photo-lips"><img src="img/lips.png" alt="Lips"></div>
+	
+			<div class="header__photo"><img src="img/nail-polish.png" alt="Nail polish"></div>
+	
+			<div class="header__photo"><img src="img/single-pot.png" alt="Single pot"></div>
+	
+			<div class="header__photo"><img src="img/eyeshadow.png" alt ="Eyeshadow"></div>
 		</div>
-		<div class="product__container">
-		</div>
-		<script src="js/script.js"></script>
 	</div>
+	<div class="container">
+		<div class="filter">
+			<ul class="filter__list" id="brand"></ul>
+			<form class='filter__price' action="#">
+				<input type="number" id="maxprice" name="maxprice" min="0" max="1000">
+				<input type="number" id="minprice" name="minprice" min="0" max="1000">
+			</form>
+		</div>
+		<div class="product">
+			<div class="product__sort">
+				<button data-sort='A-Z'>
+					Sort A to Z
+				</button>
+				<button data-sort='Z-A'>
+					Sort Z to A
+				</button>
+				<button data-sort='pricedown'>
+					Sort price &#8593;
+				</button>
+				<button data-sort='priceup'> 
+					Sort price &#8595;
+				</button>
+			</div>
+			<div class="product__container">
+			</div>
+		</div>
+	</div>
+
+	<script src="js/script.js"></script>
 </body>
 </html>
