@@ -23,13 +23,20 @@ window.addEventListener('DOMContentLoaded', () => {
 		return data;
 	})
 	.then(data => {
+		document.querySelector('#clearfilter').addEventListener('click', (e) => {
+			getListOfBrands(data, '#brand');
+			getColors(data);
+			SortData(data);
+			maxPriceFilter = 1000;
+			minPriceFilter = 0;
+		});
 		SortData(data);
 	});
 
 	function getColors(data) {
 		data.forEach(item => {
 			item.product_colors.forEach(color => {
-				if (color.colour_name !== '' && color.	colour_name !== null && !colorsFilter.includes(color.colour_name)) {
+				if (!colorsFilter.includes(color.hex_value)) {
 					colorsFilter.push(color.hex_value);
 				}
 			});
@@ -43,8 +50,24 @@ window.addEventListener('DOMContentLoaded', () => {
 		list.forEach(item => {
 			const colorLi = document.createElement('li');
 			colorLi.classList.add('filter__li_item');
+			colorLi.dataset.color = item;
 			colorLi.style.backgroundColor = item;
 			parent.append(colorLi);
+		});
+
+	}
+
+	function setColorFilter(data) {
+		const listParent = document.querySelector('#color');
+		listParent.addEventListener('click', (e) => {
+			if (colorsFilter.length > 20) {
+				colorsFilter = [[]];
+			}
+			if(e.target.dataset.color){
+				colorsFilter.push(e.target.dataset.color);
+			}
+			console.log(colorsFilter);
+			renderProductItem(data, '.product__container');
 		});
 	}
 
@@ -94,6 +117,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		listForFilter('brand', dataSort);
 		SetMaxPrice(dataSort);
 		SetMinPrice(dataSort);
+		setColorFilter(dataSort);
 	}
 
 	function colorsArray(array) {
@@ -153,7 +177,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		parent.innerHTML = '';
 		for (const item of data) {
 			if (filterBrands.includes(item.brand) && Math.round(item.price) >= minPriceFilter && Math.round(item.price) <= maxPriceFilter) {
-				const productItem = document.createElement('div');
+				let productItem = document.createElement('div');
 				productItem.classList.add('product__item');
 				const colorsHTML = colorsArray(item.product_colors);
 				productItem.innerHTML = `
@@ -171,7 +195,14 @@ window.addEventListener('DOMContentLoaded', () => {
 					<div class="product__color_section">${colorsHTML}</div>
 				</div>
 				`;
-				parent.append(productItem);
+				if (item.product_colors.length == 0 && colorsFilter[0].length !== 0) {
+					parent.append(productItem);
+				}
+				for (const color of item.product_colors) {
+					if (colorsFilter.includes(color.hex_value)) {
+						parent.append(productItem);
+					}
+				}
 			}
 		}
 	}
