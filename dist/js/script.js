@@ -13,7 +13,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	getData('http://makeup-api.herokuapp.com/api/v1/products.json?product_category=liquid&product_type=eyeliner')
 	.then(data => {
-		console.log(data);
 		SortData(data);
 	});
 
@@ -61,12 +60,22 @@ window.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	function renderProductItem (data, parentContainer) {
+	function colorsArray(array) {
+		let colorsItems = ``;
+		for (const color of array) {
+			colorsItems = colorsItems + `<div class="product__color" style="background-color: ${color.hex_value};>
+			</div>`;
+		};
+		return colorsItems;
+	}
+
+	function renderProductItem(data, parentContainer) {
 		const parent = document.querySelector(parentContainer);
 		parent.innerHTML = '';
-		data.forEach((item) => {
+		for (const item of data) {
 			const productItem = document.createElement('div');
 			productItem.classList.add('product__item');
+			const colorsHTML = colorsArray(item.product_colors);
 			productItem.innerHTML = `
 			<div class="product__body">
 				<div class="product__image">
@@ -79,13 +88,10 @@ window.addEventListener('DOMContentLoaded', () => {
 					<p>$${item.price}</p>
 					<p></p>
 				</div>
-				<div class="product__color_section">
-					<div class="product__color" style="background-color: #000000; height: 20px; margin: 0 3px 3px 3px">
-					</div>
-				</div>
+				<div class="product__color_section">${colorsHTML}</div>
 			</div>
 			`;
 			parent.append(productItem);
-		});
+		};
 	}
 });
