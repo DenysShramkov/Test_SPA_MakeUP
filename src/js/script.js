@@ -2,7 +2,6 @@
 
 window.addEventListener('DOMContentLoaded', () => {
 
-
 	const getData = async (url) => {
 		const res = await fetch(url); 
 		if (!res.ok) {
@@ -69,9 +68,9 @@ window.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function colorsArray(array) {
-		let colorsItems = ``;
+		let colorsItems = '';
 		for (const color of array) {
-			colorsItems = colorsItems + `<div class="product__color" style="background-color: ${color.hex_value};>
+			colorsItems += `<div class="product__color" style="background-color: ${color.hex_value};>
 			</div>`;
 		};
 		return colorsItems;

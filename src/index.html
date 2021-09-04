@@ -41,8 +41,8 @@
     <meta name="msapplication-TileImage" content="icons/favicon//ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="css/style.min.css">
-</head>
+    <link rel="stylesheet" href="css/style.min.css"> 
+
 <body>
 	<div class="container">
 		<div class="header__photo_wrapper">
@@ -60,7 +60,10 @@
 	<div class="container">
 		<div class="filter">
 			<ul class="filter__list" id="brand"></ul>
-			<ul class="filter__list" id="price"></ul>
+			<form class='filter__price' action="#">
+				<input type="number" id="maxprice" name="maxprice" min="0" max="1000">
+				<input type="number" id="minprice" name="minprice" min="0" max="1000">
+			</form>
 		</div>
 		<div class="product">
 			<div class="product__sort">
