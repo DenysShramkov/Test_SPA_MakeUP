@@ -9,8 +9,11 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 		return await res.json();
 	};
-	let filterBrands; 
-	let brandsLength;
+	let filterBrands,
+		brandsLength,
+		maxPriceFilter = 1000,
+		minPriceFilter = 0;
+
 
 	getData('http://makeup-api.herokuapp.com/api/v1/products.json?product_category=liquid&product_type=eyeliner')
 	.then(data => {
@@ -65,6 +68,8 @@ window.addEventListener('DOMContentLoaded', () => {
 			renderProductItem(dataSort, '.product__container');
 		});
 		listForFilter('brand', dataSort);
+		SetMaxPrice(dataSort);
+		SetMinPrice(dataSort);
 	}
 
 	function colorsArray(array) {
@@ -123,28 +128,48 @@ window.addEventListener('DOMContentLoaded', () => {
 		const parent = document.querySelector(parentContainer);
 		parent.innerHTML = '';
 		for (const item of data) {
-			const productItem = document.createElement('div');
-			productItem.classList.add('product__item');
-			const colorsHTML = colorsArray(item.product_colors);
-			productItem.innerHTML = `
-			<div class="product__body">
-				<div class="product__image">
-					<img class="" src=${item.api_featured_image}>
+			if (filterBrands.includes(item.brand) && Math.round(item.price) >= minPriceFilter && Math.round(item.price) <= maxPriceFilter) {
+				const productItem = document.createElement('div');
+				productItem.classList.add('product__item');
+				const colorsHTML = colorsArray(item.product_colors);
+				productItem.innerHTML = `
+				<div class="product__body">
+					<div class="product__image">
+						<img class="" src=${item.api_featured_image}>
+					</div>
+					<div class="product__text_block">
+						<h3>${item.brand}</h3>
+						<h4>${item.name}</h4>
+						<p><span class="bold">Category: </span>${item.category}</p>
+						<p>$${item.price}</p>
+						<p></p>
+					</div>
+					<div class="product__color_section">${colorsHTML}</div>
 				</div>
-				<div class="product__text_block">
-					<h3>${item.brand}</h3>
-					<h4>${item.name}</h4>
-					<p><span class="bold">Category: </span>${item.category}</p>
-					<p>$${item.price}</p>
-					<p></p>
-				</div>
-				<div class="product__color_section">${colorsHTML}</div>
-			</div>
-			`;
+				`;
 
-			if (filterBrands.includes(item.brand)) {
 				parent.append(productItem);
 			}
 		}
 	}
+
+	const priceFilterMax = document.querySelector('#maxprice'),
+		priceFilterMin = document.querySelector('#minprice');
+
+	function SetMaxPrice(data) {
+		priceFilterMax.addEventListener('change', () => {
+			maxPriceFilter = priceFilterMax.value;
+			console.log(maxPriceFilter);
+			renderProductItem(data, '.product__container');
+		});
+	}
+	function SetMinPrice(data) {
+		priceFilterMin.addEventListener('change', () => {
+			minPriceFilter = priceFilterMin.value;
+			console.log(minPriceFilter);
+			renderProductItem(data, '.product__container');
+		});
+	}
+		
+
 });
