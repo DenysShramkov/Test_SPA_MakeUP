@@ -12,17 +12,41 @@ window.addEventListener('DOMContentLoaded', () => {
 	let filterBrands,
 		brandsLength,
 		maxPriceFilter = 1000,
-		minPriceFilter = 0;
+		minPriceFilter = 0,
+		colorsFilter = [];
 
 
 	getData('http://makeup-api.herokuapp.com/api/v1/products.json?product_category=liquid&product_type=eyeliner')
 	.then(data => {
 		getListOfBrands(data, '#brand');
+		getColors(data);
 		return data;
 	})
 	.then(data => {
 		SortData(data);
 	});
+
+	function getColors(data) {
+		data.forEach(item => {
+			item.product_colors.forEach(color => {
+				if (color.colour_name !== '' && color.	colour_name !== null && !colorsFilter.includes(color.colour_name)) {
+					colorsFilter.push(color.hex_value);
+				}
+			});
+		});
+		renderColorsList(colorsFilter.sort(), '#color');
+	}
+
+	function renderColorsList(list, parentID) {
+		const parent = document.querySelector(parentID);
+		parent.innerHTML = '';
+		list.forEach(item => {
+			const colorLi = document.createElement('li');
+			colorLi.classList.add('filter__li_item');
+			colorLi.style.backgroundColor = item;
+			parent.append(colorLi);
+		});
+	}
 
 	let dataSort;
 
@@ -75,7 +99,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	function colorsArray(array) {
 		let colorsItems = '';
 		for (const color of array) {
-			colorsItems += `<div class="product__color" style="background-color: ${color.hex_value};>
+			colorsItems += `<div class="product__color" style="background-color: ${color.hex_value}";>
 			</div>`;
 		};
 		return colorsItems;
@@ -147,7 +171,6 @@ window.addEventListener('DOMContentLoaded', () => {
 					<div class="product__color_section">${colorsHTML}</div>
 				</div>
 				`;
-
 				parent.append(productItem);
 			}
 		}
