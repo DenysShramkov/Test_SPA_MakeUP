@@ -59,11 +59,20 @@
 	</div>
 	<div class="container">
 		<div class="filter">
-			<ul class="filter__list" id="brand"></ul>
+			<div class="filter__list_wrapper">
+				Filter By brand
+				<ul class="filter__list" id="brand"></ul>
+			</div>
 			<form class='filter__price' action="#">
-				<input type="number" id="maxprice" name="maxprice" min="0" max="1000">
-				<input type="number" id="minprice" name="minprice" min="0" max="1000">
+				<input type="number" id="maxprice" name="maxprice" min="0" max="1000"
+				placeholder="max price">
+				<input type="number" id="minprice" name="minprice" min="0" max="1000" placeholder="min price">
 			</form>
+			<div class="filter__list_wrapper">
+				Filter by color
+				<ul class='filter__list' id='color'></ul>
+			</div>
+			<button id='clearfilter'>Clear all filters</button>
 		</div>
 		<div class="product">
 			<div class="product__sort">

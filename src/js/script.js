@@ -12,17 +12,69 @@ window.addEventListener('DOMContentLoaded', () => {
 	let filterBrands,
 		brandsLength,
 		maxPriceFilter = 1000,
-		minPriceFilter = 0;
+		minPriceFilter = 0,
+		colorsFilter = [],
+		el;
 
 
 	getData('http://makeup-api.herokuapp.com/api/v1/products.json?product_category=liquid&product_type=eyeliner')
 	.then(data => {
 		getListOfBrands(data, '#brand');
+		getColors(data);
 		return data;
 	})
 	.then(data => {
+		document.querySelector('#clearfilter').addEventListener('click', (e) => {
+			getListOfBrands(data, '#brand');
+			getColors(data);
+			SortData(data);
+			maxPriceFilter = 1000;
+			minPriceFilter = 0;
+		});
 		SortData(data);
 	});
+
+	function getColors(data) {
+		data.forEach(item => {
+			item.product_colors.forEach(color => {
+				if (!colorsFilter.includes(color.hex_value)) {
+					colorsFilter.push(color.hex_value);
+				}
+			});
+		});
+		renderColorsList(colorsFilter.sort(), '#color');
+	}
+
+	function renderColorsList(list, parentID) {
+		const parent = document.querySelector(parentID);
+		parent.innerHTML = '';
+		list.forEach(item => {
+			const colorLi = document.createElement('li');
+			colorLi.classList.add('filter__li_item');
+			colorLi.dataset.color = item;
+			colorLi.style.backgroundColor = item;
+			parent.append(colorLi);
+		});
+
+	}
+
+	function setColorFilter(data) {
+		const listParent = document.querySelector('#color');
+		listParent.addEventListener('click', (e) => {
+			if (colorsFilter.length > 10) {
+				colorsFilter = [[]];
+				document.querySelectorAll('#color .filter__li_item').forEach(item => {
+					item.classList.remove('active');
+				});
+			}
+			if(e.target.dataset.color){
+				colorsFilter.push(e.target.dataset.color);
+				e.target.classList.add('active');
+			}
+			console.log(colorsFilter);
+			renderProductItem(data, '.product__container');
+		});
+	}
 
 	let dataSort;
 
@@ -70,12 +122,13 @@ window.addEventListener('DOMContentLoaded', () => {
 		listForFilter('brand', dataSort);
 		SetMaxPrice(dataSort);
 		SetMinPrice(dataSort);
+		setColorFilter(dataSort);
 	}
 
 	function colorsArray(array) {
 		let colorsItems = '';
 		for (const color of array) {
-			colorsItems += `<div class="product__color" style="background-color: ${color.hex_value};>
+			colorsItems += `<div class="product__color" style="background-color: ${color.hex_value}";>
 			</div>`;
 		};
 		return colorsItems;
@@ -106,10 +159,14 @@ window.addEventListener('DOMContentLoaded', () => {
 		const element = document.querySelector(`#${id}`);
 		element.addEventListener('click', (e) => {
 			if (e.target.classList.contains('filter__li_item')) {
-				if (filterBrands.length > brandsLength - 5) {
+				if (filterBrands.length > (brandsLength - 5)) {
 					filterBrands = [];
+					document.querySelectorAll('#brand .filter__li_item').forEach(item => {
+						item.classList.remove('active');
+					});
 				}
 				filterBrands.push(e.target.getAttribute(`data-${id}`));
+				e.target.classList.add('active');
 				renderProductItem(data, '.product__container');
 			}
 		});
@@ -129,7 +186,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		parent.innerHTML = '';
 		for (const item of data) {
 			if (filterBrands.includes(item.brand) && Math.round(item.price) >= minPriceFilter && Math.round(item.price) <= maxPriceFilter) {
-				const productItem = document.createElement('div');
+				let productItem = document.createElement('div');
 				productItem.classList.add('product__item');
 				const colorsHTML = colorsArray(item.product_colors);
 				productItem.innerHTML = `
@@ -147,8 +204,14 @@ window.addEventListener('DOMContentLoaded', () => {
 					<div class="product__color_section">${colorsHTML}</div>
 				</div>
 				`;
-
-				parent.append(productItem);
+				if (item.product_colors.length == 0 && colorsFilter[0].length !== 0) {
+					parent.append(productItem);
+				}
+				for (const color of item.product_colors) {
+					if (colorsFilter.includes(color.hex_value)) {
+						parent.append(productItem);
+					}
+				}
 			}
 		}
 	}
@@ -170,6 +233,4 @@ window.addEventListener('DOMContentLoaded', () => {
 			renderProductItem(data, '.product__container');
 		});
 	}
-		
-
 });
