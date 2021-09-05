@@ -1,14 +1,61 @@
 .filter
+	display: flex
+	background-color: #f3cdd4
+	margin-top: 10px
 	.filter__li_item
-			list-style-type: none
+		list-style-type: none
+		cursor: pointer
+		margin-top: 5px
+		font-weight: 300
+	.active
+		font-weight: bold
 	#color
-		display: flex
+		display: none
 		flex-wrap: wrap
+		width: 300%
 		.filter__li_item
 			width: 30px
 			height: 30px
 			margin: 2px
 			border-radius: 50%
+		.active
+			border: 3px solid #f77990
+	&__list
+		display: none
+		position: absolute
+		top: 55px
+		text-align: left
+		background-color: #f3cdd4
+		padding: 10px
+	&__list_wrapper
+		width: 200px
+		height: 55px
+		position: relative
+		padding-top: 18px
+		text-align: center
+		&:hover
+			#brand
+				display: block
+			#color
+				display: flex
+				background-color: #ffffff00
+	&__price
+		margin: 0 20px
+		display: flex
+		flex-direction: column
+		input
+			width: 100px
+			background-color: #f3cdd4
+			border: .5px solid #412f308e
+			border-radius: 10px
+			margin-top: 5px
+			padding-left: 10px
+			&:focus
+				outline: none
+	#clearfilter
+		background-color: #ffffff00
+		border: none
+		
 			
 		
 input[type=number]::-webkit-inner-spin-button,

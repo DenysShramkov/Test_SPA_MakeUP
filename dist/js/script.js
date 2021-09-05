@@ -13,7 +13,8 @@ window.addEventListener('DOMContentLoaded', () => {
 		brandsLength,
 		maxPriceFilter = 1000,
 		minPriceFilter = 0,
-		colorsFilter = [];
+		colorsFilter = [],
+		el;
 
 
 	getData('http://makeup-api.herokuapp.com/api/v1/products.json?product_category=liquid&product_type=eyeliner')
@@ -60,11 +61,15 @@ window.addEventListener('DOMContentLoaded', () => {
 	function setColorFilter(data) {
 		const listParent = document.querySelector('#color');
 		listParent.addEventListener('click', (e) => {
-			if (colorsFilter.length > 20) {
+			if (colorsFilter.length > 10) {
 				colorsFilter = [[]];
+				document.querySelectorAll('#color .filter__li_item').forEach(item => {
+					item.classList.remove('active');
+				});
 			}
 			if(e.target.dataset.color){
 				colorsFilter.push(e.target.dataset.color);
+				e.target.classList.add('active');
 			}
 			console.log(colorsFilter);
 			renderProductItem(data, '.product__container');
@@ -154,10 +159,14 @@ window.addEventListener('DOMContentLoaded', () => {
 		const element = document.querySelector(`#${id}`);
 		element.addEventListener('click', (e) => {
 			if (e.target.classList.contains('filter__li_item')) {
-				if (filterBrands.length > brandsLength - 5) {
+				if (filterBrands.length > (brandsLength - 5)) {
 					filterBrands = [];
+					document.querySelectorAll('#brand .filter__li_item').forEach(item => {
+						item.classList.remove('active');
+					});
 				}
 				filterBrands.push(e.target.getAttribute(`data-${id}`));
+				e.target.classList.add('active');
 				renderProductItem(data, '.product__container');
 			}
 		});
@@ -224,6 +233,4 @@ window.addEventListener('DOMContentLoaded', () => {
 			renderProductItem(data, '.product__container');
 		});
 	}
-		
-
 });
